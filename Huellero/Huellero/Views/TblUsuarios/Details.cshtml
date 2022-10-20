@@ -1,0 +1,36 @@
+﻿@model Huellero.Models.TblUsuario
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>TblUsuario</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.VNombres)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.VNombres)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.VApellidos)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.VApellidos)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.VHuella)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.VHuella)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
