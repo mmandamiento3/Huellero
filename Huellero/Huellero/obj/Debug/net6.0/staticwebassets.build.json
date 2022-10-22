@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "hB61mWYEprI0dUahDMBI2MHL4kB5kApudbyYMokiv4s=",
+  "Hash": "ZoZXVnSQ79uXQwzvPHlPU0BKYdeLnZs87ub6xj7nfP4=",
   "Source": "Huellero",
   "BasePath": "_content/Huellero",
   "Mode": "Default",
@@ -83,6 +83,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\favicon.ico"
+    },
+    {
+      "Identity": "C:\\Users\\51981\\Desktop\\Desarrollo Huellero\\Huellero\\Huellero\\Huellero\\wwwroot\\js\\knockout-3.5.1.js",
+      "SourceId": "Huellero",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\51981\\Desktop\\Desarrollo Huellero\\Huellero\\Huellero\\Huellero\\wwwroot\\",
+      "BasePath": "_content/Huellero",
+      "RelativePath": "js/knockout-3.5.1.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\knockout-3.5.1.js"
     },
     {
       "Identity": "C:\\Users\\51981\\Desktop\\Desarrollo Huellero\\Huellero\\Huellero\\Huellero\\wwwroot\\js\\site.js",

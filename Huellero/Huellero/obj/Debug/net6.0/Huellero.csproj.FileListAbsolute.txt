@@ -262,3 +262,4 @@ C:\Users\51981\Desktop\Desarrollo Huellero\Huellero\Huellero\Huellero\bin\Debug\
 C:\Users\51981\Desktop\Desarrollo Huellero\Huellero\Huellero\Huellero\bin\Debug\net6.0\runtimes\win\lib\net6.0\System.Drawing.Common.dll
 C:\Users\51981\Desktop\Desarrollo Huellero\Huellero\Huellero\Huellero\bin\Debug\net6.0\runtimes\win\lib\net6.0\System.Security.Cryptography.ProtectedData.dll
 C:\Users\51981\Desktop\Desarrollo Huellero\Huellero\Huellero\Huellero\bin\Debug\net6.0\runtimes\win\lib\net6.0\System.Windows.Extensions.dll
+C:\Users\51981\Desktop\Desarrollo Huellero\Huellero\Huellero\Huellero\bin\Debug\net6.0\SecuGen.FDxSDKPro.DotNet.Windows.dll

@@ -16,4 +16,11 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.10" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="SecuGen.FDxSDKPro.DotNet.Windows">
+      <HintPath>..\..\..\..\Drivers Huellero\FDx SDK Pro for Windows v4.2_J1.12\FDx SDK Pro for Windows 4.2\DotNET\Bin\x64\SecuGen.FDxSDKPro.DotNet.Windows.dll</HintPath>
+      <Private></Private>
+    </Reference>
+  </ItemGroup>
+
 </Project>

@@ -4,40 +4,125 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<h1>Nuevo Usuario</h1>
 
-<h4>TblUsuario</h4>
+
 <hr />
 <div class="row">
-    <div class="col-md-4">
+
+    <div class="col-md-6">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div>
+                <div class="form-group">
+                    <label asp-for="VNombres" class="control-label">Nombres</label>
+                    <input asp-for="VNombres" class="form-control" />
+                    <span asp-validation-for="VNombres" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="VApellidos" class="control-label">Apellidos</label>
+                    <input asp-for="VApellidos" class="form-control" />
+                    <span asp-validation-for="VApellidos" class="text-danger"></span>
+                </div>
+
+            </div>                 
+            <br />  
+           <br />
+
+                <div class="row">
+                    <div class="col" >
+                     <label class="control-label">Dispositivos:</label>
+                     </div>
+                     <div class="col">
+                        <select name="Dispositivos" id ="disposi" class="form-control" asp-items="@ViewBag.Dispositivoss"></select>
+                    </div>
+
+                    
+                    <div class="col">
+                     <div class="col col-lg-3">
+
+                     </div>
+                    <form asp-action="Habilitar">
+                        <input type="submit" value="Iniciar" class="btn btn-danger" />                       
+                    </form>
+                     </div>
+                </div>
+
+            <br />
             <div class="form-group">
-                <label asp-for="VNombres" class="control-label"></label>
-                <input asp-for="VNombres" class="form-control" />
-                <span asp-validation-for="VNombres" class="text-danger"></span>
+                    <label asp-for="VHuella" class="control-label">Huella</label>
+                    <input asp-for="VHuella" id ="Huella" class="form-control" />
             </div>
+            <br />
+
             <div class="form-group">
-                <label asp-for="VApellidos" class="control-label"></label>
-                <input asp-for="VApellidos" class="form-control" />
-                <span asp-validation-for="VApellidos" class="text-danger"></span>
+                <input type="submit" id="Capturar" value="Capturar" class="btn btn-dark"/>
             </div>
+            
+
+            <br />
+            <br />
+
+            
             <div class="form-group">
-                <label asp-for="VHuella" class="control-label"></label>
-                <input asp-for="VHuella" class="form-control" />
-                <span asp-validation-for="VHuella" class="text-danger"></span>
+                <input type="submit" id="Guardar" value="Guardar" class="btn btn-primary" />
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
+
+            <br />
+            <br />
+            @*--Estado:*@
+            <h1>@ViewBag.ProducTtitle</h1>
+            Estado: @ViewBag.Estado
         </form>
     </div>
-</div>
 
+@*    <div class="col-md-6"-">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+*@
+            
+
+
+@*
+        </form>
+    </div>*@
+</div>
+<br />
+<br />
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
 
+<script src="~/js/knockout-3.5.1.js"></script>
+
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
+
+<script type="text/javascript">
+
+    Deshabilitar(true);
+
+    function Deshabilitar (bool){
+           
+            document.getElementById("Capturar").disabled= bool;
+            //document.getElementById("Guardar").disabled= bool;
+            document.getElementById("Huella").disabled= bool;
+            
+           }
+
+        function DispositivoSeleccionado() {
+           var obj = document.getElementById("disposi").value;
+           console.log(obj);
+    }
+
+
+        function InicializarHuellero() {
+        var Dispositivo = $("#disposi").val();
+        console.log(Dispositivo);
+        $('.loading').show();
+            let url = "/TblUsuario/AbrirDispositivo";
+    }
+    
+</script>
