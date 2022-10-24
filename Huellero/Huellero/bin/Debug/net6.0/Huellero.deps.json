@@ -12,6 +12,7 @@
           "Microsoft.EntityFrameworkCore.SqlServer": "6.0.10",
           "Microsoft.EntityFrameworkCore.Tools": "6.0.10",
           "Microsoft.VisualStudio.Web.CodeGeneration.Design": "6.0.10",
+          "System.Drawing.Common": "6.0.0",
           "SecuGen.FDxSDKPro.DotNet.Windows": "1.0.0.0"
         },
         "runtime": {

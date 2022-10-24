@@ -11,11 +11,17 @@ using NuGet.Packaging;
 using NuGet.Protocol.Plugins;
 using Microsoft.AspNetCore.Components.Web;
 using System.Drawing;
+using System.Drawing.Imaging;
+using Microsoft.AspNetCore.Identity;
+using System.Drawing.Drawing2D;
+using System.Security.Cryptography;
+using System.Buffers.Text;
 
 namespace Huellero.Controllers
 {
     public class TblUsuariosController : Controller
     {
+        private readonly UserManager<IdentityUser> _userManager;
         private readonly PruebaContext _context;
         private SGFingerPrintManager m_FPM;
         //private bool m_LedOn = false;
@@ -26,27 +32,28 @@ namespace Huellero.Controllers
         //private Byte[] m_VrfMin;
         private SGFPMDeviceList[] m_DevList;
         List<SelectListItem> ListaDispositivos;
+        byte[] fp_image;
+
         public TblUsuariosController(PruebaContext context)
         {
             _context = context;
 
             m_FPM = new SGFingerPrintManager();
             Listar_Dispositivos();
-            GenerarHuella();
-            
+
         }
-         private List<SelectListItem> Listar_Dispositivos()
+        private List<SelectListItem> Listar_Dispositivos()
         {
             Int32 iError;
             string enum_device;
-            
+
 
             // Enumerate Device
             iError = m_FPM.EnumerateDevice();
 
             // Get enumeration info into SGFPMDeviceList
             m_DevList = new SGFPMDeviceList[m_FPM.NumberOfDevice];
-           ListaDispositivos = new List<SelectListItem>();
+            ListaDispositivos = new List<SelectListItem>();
 
             for (int i = 0; i < m_FPM.NumberOfDevice; i++)
             {
@@ -60,10 +67,10 @@ namespace Huellero.Controllers
                     Text = enum_device
                 });
 
-               
+
             }
 
-      
+
             return ListaDispositivos;
         }
 
@@ -73,7 +80,7 @@ namespace Huellero.Controllers
         // GET: TblUsuarios
         public async Task<IActionResult> Index()
         {
-              return View(await _context.TblUsuarios.ToListAsync());
+            return View(await _context.TblUsuarios.ToListAsync());
         }
 
         // GET: TblUsuarios/Details/5
@@ -226,7 +233,7 @@ namespace Huellero.Controllers
             {
                 _context.TblUsuarios.Remove(tblUsuario);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
@@ -235,7 +242,7 @@ namespace Huellero.Controllers
         [ValidateAntiForgeryToken]
         private bool TblUsuarioExists(int id)
         {
-          return _context.TblUsuarios.Any(e => e.Id == id);
+            return _context.TblUsuarios.Any(e => e.Id == id);
         }
 
         //public static Task<JsonResult> Prueba(int idSeleccionado)
@@ -244,30 +251,35 @@ namespace Huellero.Controllers
         //}
 
         [HttpPost]
-        public async Task<JsonResult> AbrirDispositivo(int ValorSeleccionado)
+        public async Task<JsonResult> validarDispositivo(int ValorSeleccionado)
         {
             if (m_FPM.NumberOfDevice == 0)
                 return Json(6);
 
             SGFPMDeviceName device_name;
             int device_id;
-            int iError;      
-         
+            int iError;
+
             device_name = m_DevList[ValorSeleccionado].DevName;
             device_id = m_DevList[ValorSeleccionado].DevID;
 
-            iError = OpenDevice2(device_name, device_id);
+            iError = OpenDevice(device_name, device_id);
+
+
             return Json(iError);
         }
 
 
-        private int OpenDevice2(SGFPMDeviceName device_name, int device_id)
+        private int OpenDevice(SGFPMDeviceName device_name, int device_id)
         {
             int iError = m_FPM.Init(device_name);
             iError = m_FPM.OpenDevice(device_id);
-            
 
-           return iError;
+            if (iError == (Int32)SGFPMError.ERROR_NONE)
+            {
+                Obtener();
+            }
+            return iError;
         }
 
         private void Obtener()
@@ -281,29 +293,49 @@ namespace Huellero.Controllers
                 m_ImageHeight = pInfo.ImageHeight;
             }
         }
-        private void GenerarHuella()
+
+        //public async Task<FileResult> GenerarHuella()
+        //{
+
+        //}
+
+
+        public void GenerarHuella(int ValorSeleccionado)
         {
             int iError;
-            int elap_time;
-            Byte[] fp_image;
-            //Cursor.Current = Cursors.WaitCursor;
+            Bitmap bmpResultado;
+            using var ms = new MemoryStream();
 
-            elap_time = Environment.TickCount;
-            fp_image = new Byte[m_ImageWidth * m_ImageHeight];
-
-            iError = m_FPM.GetImage(fp_image);
-
-
-            if (iError == (int)SGFPMError.ERROR_NONE)
+            iError = inicializarDispositivo(ValorSeleccionado);
+            if (iError == 0)
             {
-                elap_time = Environment.TickCount - elap_time;
-                DrawImage(fp_image);
-                //StatusBar.Text = "Capture Time : " + elap_time + " ms";
+                int elap_time;
+                Byte[] fp_image;
+
+                elap_time = Environment.TickCount;
+                fp_image = new Byte[m_ImageWidth * m_ImageHeight];
+                iError = m_FPM.GetImage(fp_image);
+                if (iError == (int)SGFPMError.ERROR_NONE)
+                {
+                    elap_time = Environment.TickCount - elap_time;
+                    bmpResultado = DrawImage(fp_image);
+
+                    //bmpResultado.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+
+
+                    //StatusBar.Text = "Capture Time : " + elap_time + " ms";
+                    //using var imagenn = new MemoryStream();
+                    //bmpResultado.Save(imagenn, ImageFormat.Jpeg);
+                    //var imageByt = imagenn.ToArray();
+                }
+
+                //File = (ms.ToArray(), "image/png");
+
             }
-            
+            // return ms.ToArray();
         }
 
-        private void DrawImage(Byte[] imgData)//, PictureBox picBox)
+        private Bitmap DrawImage(Byte[] imgData)//, PictureBox picBox)
         {
             int colorval;
             Bitmap bmp = new Bitmap(m_ImageWidth, m_ImageHeight);
@@ -318,9 +350,100 @@ namespace Huellero.Controllers
                 }
             }
             //picBox.Refresh();
+            return bmp;
+
+        }
+
+        public int inicializarDispositivo(int ValorSeleccionado)
+        {
+            int iError;
+            if (m_FPM.NumberOfDevice == 0)
+                return iError = 6;
+
+            SGFPMDeviceName device_name;
+            int device_id;
+
+
+            device_name = m_DevList[ValorSeleccionado].DevName;
+            device_id = m_DevList[ValorSeleccionado].DevID;
+
+            iError = OpenDevice(device_name, device_id);
+
+
+            return (iError);
         }
 
 
+
+
+
+        //Prueba 2
+
+
+
+        //public FileResult GetFileFromBytes(byte[] bytesIn)
+        //{
+        //    return File(bytesIn, "image/jpeg");
+        //}
+
+        //[HttpGet]
+        //public async Task<IActionResult> GetUserImageFile(int valorSeleccionado)
+        //{
+        //    int iError;
+        //    int colorval;
+
+        //    iError = inicializarDispositivo(valorSeleccionado);
+        //    if (iError == 0)
+        //    {
+        //        int elap_time;
+               
+
+        //        elap_time = Environment.TickCount;
+        //        fp_image = new Byte[m_ImageWidth * m_ImageHeight];
+        //        iError = m_FPM.GetImage(fp_image);
+        //        if (iError == (int)SGFPMError.ERROR_NONE)
+        //        {
+        //            elap_time = Environment.TickCount - elap_time;
+
+        //        }
+        //    }
+        //    //var user = await _userManager.GetUserAsync(User);
+        //    //if (user == null)
+        //    //{
+        //    //    return null;
+        //    ////}
+        //    //FileResult imageUserFile = GetFileFromBytes(fp_image);
+        //    //return imageUserFile;
+
+        //    //----------------------------------------------------//
+        //    //Bitmap bmp = new Bitmap(m_ImageWidth, m_ImageHeight);
+        //    //for (int i = 0; i < bmp.Width; i++)
+        //    //{
+        //    //    for (int j = 0; j < bmp.Height; j++)
+        //    //    {
+        //    //        colorval = (int)fp_image[(j * m_ImageWidth) + i];
+        //    //        bmp.SetPixel(i, j, Color.FromArgb(colorval, colorval, colorval));
+        //    //    }
+        //    //}
+        //    //Byte[] data = BitmapToByteArray(bmp);
+        //    //FileContentResult result = new FileContentResult(data, "image/png");
+
+        //    //return result;
+
+        //    //_----------------------//
+
+        //    //byte[] bytes = Convert.FromBase64String(fp_image);
+        //    string cod64 = Convert.ToBase64String(fp_image);
+
+        //    using (var ms = new MemoryStream(cod64))
+        //    {
+
+        //    }
+        //}
+
+
+
+        //PRueba 2
 
     }
 }

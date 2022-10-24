@@ -50,13 +50,19 @@
 
             <br />
             <div class="form-group">
-                    <label asp-for="VHuella" class="control-label">Huella</label>
-                    <input asp-for="VHuella" id ="Huella" class="form-control" />
+                 <label asp-for="VHuella" class="control-label">Huella</label>
+                <input asp-for="VHuella" id="Huella" class="form-control" />
+                <img id="imagenHuella" src=""/> 
+                <img id="imagenHuella2" />
             </div>
             <br />
 
             <div class="form-group">
-                <input type="submit" id="Capturar" value="Capturar" class="btn btn-dark"/>
+                <input  value="Capturar" id ="Capturar" class="btn btn-dark" onclick="GenerarHuella()"/>
+            </div>
+
+            <div class="form-group">
+                <input value="Capturar2" id="Capturar2" class="btn btn-dark" onclick="InicializarHuellero2()" />
             </div>
             <br />
             <br />
@@ -102,6 +108,8 @@
 
 <script type="text/javascript">
     Deshabilitar(true);
+        var ValorSeleccionado = document.getElementById("disposi").value;
+
     function Deshabilitar (bool){
            
             document.getElementById("Capturar").disabled= bool;
@@ -113,10 +121,10 @@
       function InicializarHuellero() {
 
             var estadoConexion = document.getElementById("Estado");
-            var ValorSeleccionado = document.getElementById("disposi").value;
+           
             //console.log(ValorSeleccionado);
             $('.loading').show();
-            let url = "/TblUsuarios/AbrirDispositivo";
+            let url = "/TblUsuarios/validarDispositivo";
 
             $.ajax({
                 url: url,
@@ -137,6 +145,46 @@
             });
      }
 
+     function GenerarHuella(){
+            var imgHuella = document.getElementById("imagenHuella");
+            let url = "/TblUsuarios/GenerarHuella";
+
+            $.ajax({
+                url: url,
+                cache: false,
+                type: 'POST',
+                data: { ValorSeleccionado, ValorSeleccionado },
+                success: function (data) {
+                //    if (data != 0) {
+                //        //imgHuella.src = "data:image/png;base64," + data;
+                //}
+                }
+
+            });
+     }
+
+
+
+        function InicializarHuellero2() {
+            var imgHuella = document.getElementById("imagenHuella2");
+            var estadoConexion = document.getElementById("Estado");
+
+            //console.log(ValorSeleccionado);
+            $('.loading').show();
+            let url = "/TblUsuarios/GetUserImageFile";
+
+            $.ajax({
+                url: url,
+                cache: false,
+                type: 'GET',
+                data: { ValorSeleccionado, ValorSeleccionado },
+                success: function (data) {
+                    alert(data);
+
+                    imgHuella.src = "data:image/png;base64," + data;
+                }
+            });
+        }
 
      function DevuelveError(numero){
             var rpta = "";
